@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_check_update = false
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+
+    # Customize the amount of memory on the VM: 
+    vb.memory = "4096"
+    vb.cpus = 1
+  end
+
+  # Install GUI and virtualbox additions
+  config.vm.provision "shell", inline: "sudo apt-get update"
+  config.vm.provision "shell", inline: "sudo apt-get -y install --no-install-recommends ubuntu-desktop virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11"
+  config.vm.provision "shell", inline: "sudo apt-get -y install zsh powerline fonts-powerline terminator"
+  config.vm.provision "shell", inline: "setxkbmap de", privileged: false
+  config.vm.provision "shell", path: "setup-zsh.sh", privileged: false
+
+  #Install all ROS dependencies and environment stuff for development on VM
+  config.vm.provision "shell", path: "ros-bootstrap.sh"
+  config.vm.provision "shell", path: "ros-env-zsh.sh", privileged: false
+  config.vm.provision "shell", path: "ros-env-bash.sh", privileged: false
+  
+  # use zsh as default shell, remove the next line to use bash as default shell
+  config.vm.provision "shell", inline: "sudo chsh -s /bin/zsh vagrant"
+
+end
