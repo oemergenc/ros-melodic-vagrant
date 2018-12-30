@@ -1,0 +1,25 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "rdri/ros-melodic"
+  config.vm.box_check_update = false
+
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = true
+
+    # Customize the amount of memory on the VM: 
+    vb.memory = "4096"
+    vb.cpus = 1
+
+    vb.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
+    # Customize the amount of video RAM for the VM, over 256MB causes instability issues    
+    vb.customize ["modifyvm", :id, "--vram", "64"]
+    # vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
+  end
+  
+  config.vm.provision "shell", inline: "/vagrant/catkin-workspace-setup.sh", privileged: false  
+
+end
